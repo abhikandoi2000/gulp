@@ -42,7 +42,7 @@ class RandomBall(pygame.sprite.Sprite):
 
   def __init__(self, (xy), vector, width = 20):
     pygame.sprite.Sprite.__init__(self)
-    self.image, self.rect = load_png('ball.png')
+    self.image, self.rect = load_png('osmos_64.png')
     screen = pygame.display.get_surface()
     self.area = screen.get_rect()
     self.vector = vector
@@ -52,6 +52,7 @@ class RandomBall(pygame.sprite.Sprite):
     self.movepos = [1, 1]
     self.rect.x = xy[0]
     self.rect.y = xy[1]
+    self.rect.inflate(-3, -3)
 
   def updateDirectionOnCollisionWith(self, objects, rect, vector, dx, dy):
     """
@@ -292,7 +293,7 @@ def main():
   player2 = Bat("right")
 
   # Initialise ball
-  speed = 13
+  speed = 4
   rand = ((0.1 * (random.randint(5,8))))
   ball = Ball((0,0),(0.47, speed))
   
