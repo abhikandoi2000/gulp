@@ -45,12 +45,12 @@ class World:
   def randomise(self):
     for i in range(0, ASPECT_RATIO[0], GRID_SIDE):
       for j in range(0, ASPECT_RATIO[1], GRID_SIDE):
-        vel = [random.randint(-VEL_RANGE, VEL_RANGE), random.randint(-VEL_RANGE, VEL_RANGE)]
-        rad = random.randint(RAD_RANGE/2, RAD_RANGE)
+        movementVector = (random.uniform(0, 2 * math.pi), random.randint(-VEL_RANGE, VEL_RANGE))
+        radius = random.randint(RAD_RANGE/2, RAD_RANGE)
         randX = int(random.uniform(0,1)*GRID_SIDE)
         randY = int(random.uniform(0,1)*GRID_SIDE)
         pos = (i + randX, j + randY)
-        self.addObject(Ball(pos,vel,rad))
+        self.addObject(RandomBall(pos, movementVector, radius))
 
 class RandomBall(pygame.sprite.Sprite):
   """A ball that keeps on moving in a particular direction
@@ -58,19 +58,20 @@ class RandomBall(pygame.sprite.Sprite):
   Functions: update, calcnewpos
   Attributes: area, vector"""
 
-  def __init__(self, (xy), vector, width = 20):
+  def __init__(self, initPos, movementVector, radius):
     pygame.sprite.Sprite.__init__(self)
-    self.image, self.rect = load_png('osmos_64.png')
+    self.image = load_png('osmos_64.png')
+    self.image = pygame.transform.scale(self.image, (radius*SCALE, radius*SCALE))
+    
+    self.rect = self.image.get_rect()
+    self.rect.x = initPos[0]
+    self.rect.y = initPos[1]
+    
     screen = pygame.display.get_surface()
+    
     self.area = screen.get_rect()
-    self.vector = vector
-    self.speed = 10
-    self.hit = 0
-    self.state = "still"
-    self.movepos = [1, 1]
-    self.rect.x = xy[0]
-    self.rect.y = xy[1]
-    self.rect.inflate(-3, -3)
+    self.vector = movementVector
+    self.hit = 1
 
   def updateDirectionOnCollisionWith(self, objects, rect, vector, dx, dy):
     """
@@ -78,34 +79,40 @@ class RandomBall(pygame.sprite.Sprite):
     object in `objects` and updates the direction of motion (`angle`)
     accordingly
     """
+    collided = False
     (angle, z) = vector
-    newpos = rect.move(dx, dy)
     # detect for each RandomBall
     for obj in [obj for obj in objects if self != obj]:
       if rect.colliderect(obj.rect):
-        tl = not obj.rect.collidepoint(newpos.topleft)
-        tr = not obj.rect.collidepoint(newpos.topright)
-        bl = not obj.rect.collidepoint(newpos.bottomleft)
-        br = not obj.rect.collidepoint(newpos.bottomright)
-        if tr and br:
-          # hit from the left side
-          self.rect.right = obj.rect.left
-          angle = math.pi - angle
-        elif bl and tl:
-          # hit from the right side
-          self.rect.left = obj.rect.right
-          angle = math.pi - angle
-        """if tl and tr:
-          # hit from the top side
-          self.rect.bottom = randomball.rect.top  
-        if dy < 0:
-          # hit from the bottom side
-          self.rect.top = randomball.rect.bottom
-        """
+        collided = True
+        obj.rect.inflate(-3, -3)
+
+        if not self.hit:
+          # angle = math.pi - angle
+          tl = not obj.rect.collidepoint(self.rect.topleft)
+          tr = not obj.rect.collidepoint(self.rect.topright)
+          bl = not obj.rect.collidepoint(self.rect.bottomleft)
+          br = not obj.rect.collidepoint(self.rect.bottomright)
+          if tr and br:
+            # hit from the left side
+            self.rect.right = obj.rect.left
+            angle = math.pi - angle
+          elif bl and tl:
+            # hit from the right side
+            self.rect.left = obj.rect.right
+            angle = math.pi - angle
+          """if tl and tr:
+            # hit from the top side
+            self.rect.bottom = randomball.rect.top  
+          if dy < 0:
+            # hit from the bottom side
+            self.rect.top = randomball.rect.bottom
+          """
+          self.hit = not self.hit
+        elif self.hit:
+          self.hit = not self.hit
     self.vector = (angle, z)
-    (dx, dy) = (z * math.cos(angle), z * math.sin(angle))
-    newpos = rect.move(dx, dy)
-    return newpos
+    return collided
 
   def move(self, rect, vector):
     """dpos - change in position
@@ -113,20 +120,20 @@ class RandomBall(pygame.sprite.Sprite):
     """
     (angle,z) = vector
     (dx, dy) = (z * math.cos(angle), z * math.sin(angle))
-    newpos = self.updateDirectionOnCollisionWith(randomballs, rect, vector, dx, dy)
-    return newpos
+    collided = self.updateDirectionOnCollisionWith(world.objects, rect, vector, dx, dy)
+    if not collided:
+      self.rect = rect.move(dx, dy)
+    return collided
   
   def update(self):
-    newpos = self.move(self.rect, self.vector)
-    # newpos = self.calcnewpos(self.rect, self.vector)
-    self.rect = newpos
+    self.move(self.rect, self.vector)
     (angle,z) = self.vector
 
-    if not self.area.contains(newpos):
-      tl = not self.area.collidepoint(newpos.topleft)
-      tr = not self.area.collidepoint(newpos.topright)
-      bl = not self.area.collidepoint(newpos.bottomleft)
-      br = not self.area.collidepoint(newpos.bottomright)
+    if not self.area.contains(self.rect):
+      tl = not self.area.collidepoint(self.rect.topleft)
+      tr = not self.area.collidepoint(self.rect.topright)
+      bl = not self.area.collidepoint(self.rect.bottomleft)
+      br = not self.area.collidepoint(self.rect.bottomright)
       if tr and tl or (br and bl):
         angle = -angle
       if tl and bl:
@@ -135,6 +142,9 @@ class RandomBall(pygame.sprite.Sprite):
       if tr and br:
         angle = math.pi - angle
         #self.offcourt()
+    self.vector = (angle,z)
+    
+    """
     else:
       # Deflate the rectangles so you can't catch a ball behind the bat
       player1.rect.inflate(-3, -3)
@@ -153,13 +163,8 @@ class RandomBall(pygame.sprite.Sprite):
         self.hit = not self.hit
       elif self.hit:
         self.hit = not self.hit
-    self.vector = (angle,z)
+    """
 
-  def calcnewpos(self, rect, vector):
-    (angle,z) = vector
-    (dx,dy) = (z * math.cos(angle),z * math.sin(angle))
-    return rect.move(dx,dy)
-  
   def moveup(self):
     self.movepos[1] = self.movepos[1] - (self.speed)
     self.state = "moveup"
@@ -207,7 +212,6 @@ class Ball(pygame.sprite.Sprite):
   def update(self):
     newpos = self.rect.move(self.vel)
     self.rect = newpos
-
   def moveup(self):
     self.vel[1] = self.vel[1] - (self.speed)
     self.state = "moveup"
@@ -228,17 +232,14 @@ def main():
   # Initialise screen
   pygame.init()
   screen = pygame.display.set_mode(ASPECT_RATIO)
-  pygame.display.set_caption('The Masculine Ping Pong Game')
+  pygame.display.set_caption('Gulp')
 
   # Fill background
   background = pygame.Surface(screen.get_size())
   background = background.convert()
   background.fill((0, 0, 0))
 
-  # Initialise ball
-  speed = 4
-  rand = ((0.1 * (random.randint(5,8))))
-
+  global world
   world = World()
   world.randomise()
   # ball = Ball((50,0),[0, 0], 5)
@@ -303,7 +304,6 @@ def main():
         """
     for obj in world.objects:
       screen.blit(background, obj.rect, obj.rect)
-
 
     ballsprites.update()
     # playersprites.update()
