@@ -1,5 +1,6 @@
 import pygame, os, math
 import constants
+from cmath import *
 
 def load_png(name):
   """ Load image and return image object"""
@@ -21,7 +22,7 @@ class WorldObject(pygame.sprite.Sprite):
   Functions: update, calcnewpos
   Attributes: area, vector"""
 
-  def __init__(self, initPos, movementVector, radius, world):
+  def __init__(self, initPos, velocity, radius, world):
     pygame.sprite.Sprite.__init__(self)
     self.world = world
     self.image = load_png('osmos_64.png')
@@ -34,24 +35,27 @@ class WorldObject(pygame.sprite.Sprite):
     screen = pygame.display.get_surface()
     
     self.area = screen.get_rect()
-    self.vector = movementVector
+    self.velocity = velocity
     self.hit = 1
 
-  def updateDirectionOnCollisionWith(self, objects, rect, vector, dx, dy):
+  def updateDirectionOnCollisionWith(self, objects, dx, dy):
     """
     checks if the `rect` on moving `(dx, dy)` collides with any of the
     object in `objects` and updates the direction of motion (`angle`)
     accordingly
     """
     collided = False
-    (angle, z) = vector
+    
+    (z, angle) = polar(self.velocity)
+    
     # detect for each WorldObject
     for obj in [obj for obj in objects if self != obj]:
-      if rect.colliderect(obj.rect):
+      if self.rect.colliderect(obj.rect):
         collided = True
         obj.rect.inflate(-3, -3)
 
         if not self.hit:
+          # finalVelocity = 
           # angle = math.pi - angle
           tl = not obj.rect.collidepoint(self.rect.topleft)
           tr = not obj.rect.collidepoint(self.rect.topright)
@@ -77,25 +81,27 @@ class WorldObject(pygame.sprite.Sprite):
           self.hit = not self.hit
         elif self.hit:
           self.hit = not self.hit
-    
-    self.vector = (angle, z)
-    
+
+    # self.vector = (angle, z)
+
     return collided
 
-  def move(self, rect, vector):
+  def move(self):
     """dpos - change in position
        eg: [1, 1] : move 1 unit in x and one in y
     """
-    (angle,z) = vector
-    (dx, dy) = (z * math.cos(angle), z * math.sin(angle))
-    collided = self.updateDirectionOnCollisionWith(self.world.objects, rect, vector, dx, dy)
+    
+    # (angle,z) = vector
+    
+    (dx, dy) = (self.velocity.real, self.velocity.imag)
+    collided = self.updateDirectionOnCollisionWith(self.world.objects, dx, dy)
     if not collided:
-      self.rect = rect.move(dx, dy)
+      self.rect = self.rect.move(dx, dy)
     return collided
   
   def update(self):
-    self.move(self.rect, self.vector)
-    (angle,z) = self.vector
+    self.move()
+    (z, angle) = polar(self.velocity)
 
     if not self.area.contains(self.rect):
       tl = not self.area.collidepoint(self.rect.topleft)
@@ -105,12 +111,11 @@ class WorldObject(pygame.sprite.Sprite):
       if tr and tl or (br and bl):
         angle = -angle
       if tl and bl:
-        #self.offcourt()
         angle = math.pi - angle
       if tr and br:
         angle = math.pi - angle
-        #self.offcourt()
-    self.vector = (angle,z)
+    
+    # self.vector = (angle,z)
     
     """
     else:
