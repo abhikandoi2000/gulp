@@ -13,34 +13,19 @@ except ImportError, err:
   print "couldn't load module. %s" % (err)
   sys.exit(2)
 
-
-
-
-
-
-
-"""Group for random object testing
-"""
-class RandomObjectGroup(pygame.sprite.Group):
-  def __init__(self):
-    pygame.sprite.Group.__init__(self);
-
 def main():
   # Initialise screen
   pygame.init()
   screen = pygame.display.set_mode(constants.ASPECT_RATIO)
-  pygame.display.set_caption('Gulp')
+  pygame.display.set_caption(constants.APP_TITLE)
 
   # Fill background
   background = pygame.Surface(screen.get_size())
   background = background.convert()
   background.fill((0, 0, 0))
 
-  global world
   world = World()
   world.randomise()
-  # ball = Ball((50,0),[0, 0], 5)
-  # ball2 = Ball((0,50),[0, 0], 15)
 
   # Initialise sprites
   ballsprites = pygame.sprite.RenderPlain(world.objects)
@@ -60,38 +45,39 @@ def main():
     for event in pygame.event.get():
       if event.type == QUIT:
         return
+      """
       elif event.type == KEYDOWN:
         pass
-      #   if event.key == K_w:
-      #     ball.moveup()
-      #     #player1.moveup()
-      #   if event.key == K_s:
-      #       ball.movedown()
-      #   if event.key == K_a:
-      #       ball.moveleft()
-      #   if event.key == K_d:
-      #       ball.moveright()
-      #     #player1.movedown()
-      #   if event.key == K_UP:
-      #     ball2.moveup()
-      #     #player2.moveup()
-      #   if event.key == K_DOWN:
-      #     ball2.movedown()
-      #   if event.key == K_LEFT:
-      #     ball2.moveleft()
-      #   if event.key == K_RIGHT:
-      #     ball2.moveright()
-      #     #player2.movedown()
-      # elif event.type == KEYUP:
-      #   if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
-      #     pass
-      #     # ball.vel = [0, 0]
-      #     # ball.state = "still"
-      #   if event.key == K_UP or event.key == K_DOWN or event.key == K_LEFT or event.key == K_RIGHT:
-      #     pass
+        if event.key == K_w:
+          ball.moveup()
+          #player1.moveup()
+        if event.key == K_s:
+            ball.movedown()
+        if event.key == K_a:
+            ball.moveleft()
+        if event.key == K_d:
+            ball.moveright()
+          #player1.movedown()
+        if event.key == K_UP:
+          ball2.moveup()
+          #player2.moveup()
+        if event.key == K_DOWN:
+          ball2.movedown()
+        if event.key == K_LEFT:
+          ball2.moveleft()
+        if event.key == K_RIGHT:
+          ball2.moveright()
+          #player2.movedown()
+      elif event.type == KEYUP:
+        if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
+          pass
+          # ball.vel = [0, 0]
+          # ball.state = "still"
+        if event.key == K_UP or event.key == K_DOWN or event.key == K_LEFT or event.key == K_RIGHT:
+          pass
           # ball2.vel = [0, 0]
           # ball2.state = "still"
-        """if event.key == K_w or event.key == K_s:
+        if event.key == K_w or event.key == K_s:
           ball.state = "still"
           #player1.movepos = [0,0]
           #player1.state = "still"
@@ -103,9 +89,8 @@ def main():
       screen.blit(background, obj.rect, obj.rect)
 
     ballsprites.update()
-    # playersprites.update()
     ballsprites.draw(screen)
-    # playersprites.draw(screen)
+
     pygame.display.flip()
 
 if __name__ == '__main__':
