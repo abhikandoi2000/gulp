@@ -101,17 +101,21 @@ class RandomBall(pygame.sprite.Sprite):
             # hit from the right side
             self.rect.left = obj.rect.right
             angle = math.pi - angle
-          """if tl and tr:
+          if bl and br:
             # hit from the top side
-            self.rect.bottom = randomball.rect.top  
-          if dy < 0:
+            self.rect.bottom = obj.rect.top
+            angle = 2 * math.pi - angle
+          if tl and tr:
             # hit from the bottom side
-            self.rect.top = randomball.rect.bottom
-          """
+            self.rect.top = obj.rect.bottom
+            angle = -1 * angle
+          
           self.hit = not self.hit
         elif self.hit:
           self.hit = not self.hit
+    
     self.vector = (angle, z)
+    
     return collided
 
   def move(self, rect, vector):
