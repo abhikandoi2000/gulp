@@ -22,9 +22,8 @@ def main():
   pygame.display.set_caption(constants.APP_TITLE)
 
   # Fill background
-  background = pygame.Surface(screen.get_size())
-  background = background.convert()
-  background.fill((0, 0, 0))
+  background = pygame.image.load('data/bg.jpg')
+  bgrect = background.get_rect()
 
   world = World()
 
@@ -32,7 +31,7 @@ def main():
   ballsprites = pygame.sprite.RenderPlain(world.objects)
 
   # Blit everything to the screen
-  screen.blit(background, (0, 0))
+  screen.blit(background, bgrect)
   pygame.display.flip()
 
   # Initialise clock
