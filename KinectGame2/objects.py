@@ -1,4 +1,5 @@
 import pygame, os, math
+from time import sleep
 import constants
 from cmath import *
 
@@ -64,16 +65,18 @@ class WorldObject(pygame.sprite.Sprite):
       if self.rect.colliderect(obj.rect):
         collided = True
         if self.radius > obj.radius:
-          self.radius += constants.RADIUS_CHANGE
-          obj.radius -= constants.RADIUS_CHANGE
+          self.radius = self.radius + constants.RADIUS_CHANGE
+          # obj.radius = obj.radius - constants.RADIUS_CHANGE
           if obj.radius < 0:
             obj.radius = 0
+            obj.rect.x = 5000
           return 1
         else:
-          self.radius -= constants.RADIUS_CHANGE
+          self.radius = self.radius - constants.RADIUS_CHANGE
           if self.radius < 0:
             self.radius = 0
-          obj.radius += constants.RADIUS_CHANGE
+            self.rect.x = 5000
+          # obj.radius = obj.radius + constants.RADIUS_CHANGE
           return -1
     return 0
         # obj.rect.inflate(-3, -3)
@@ -87,17 +90,35 @@ class WorldObject(pygame.sprite.Sprite):
        eg: [1, 1] : move 1 unit in x and one in y
     """
     
-    # (angle,z) = vector
-    
     (dx, dy) = (math.ceil(self.velocity.real), math.ceil(self.velocity.imag))
     collided = self.updateDirectionOnCollisionWith(self.world.objects, dx, dy)
     self.rect = self.rect.move(dx, dy)
     if collided == 1:
-      self.image = pygame.transform.smoothscale(self.image, (int(self.radius+constants.RADIUS_CHANGE), int(self.radius+constants.RADIUS_CHANGE)))
-      self.rect = self.rect.inflate(constants.RADIUS_CHANGE, constants.RADIUS_CHANGE)
+      # self.rect.width = int(self.radius * constants.SCALE)
+      # self.rect.height = int(self.radius * constants.SCALE)
+      x = self.rect.x
+      y = self.rect.y
+      self.image = load_png('osmos_64.png')
+      self.image = pygame.transform.scale(self.image, (int(self.radius*constants.SCALE), int(self.radius*constants.SCALE)))
+      
+      self.rect = self.image.get_rect()
+      self.rect.x = x
+      self.rect.y = y
+      # self.image = pygame.transform.scale(self.image, (int(self.radius * constants.SCALE), int(self.radius * constants.SCALE)))
+      # self.rect.inflate_ip(constants.RADIUS_CHANGE*constants.SCALE, constants.RADIUS_CHANGE*constants.SCALE)
+      # self.re
+      print self.rect, self.image
     elif collided == -1:
-      self.image = pygame.transform.smoothscale(self.image, (int(self.radius-constants.RADIUS_CHANGE), int(self.radius-constants.RADIUS_CHANGE)))
-      self.rect = self.rect.inflate(-constants.RADIUS_CHANGE, -constants.RADIUS_CHANGE)
+      # self.rect.width = int(self.radius * constants.SCALE)
+      # self.rect.height = int(self.radius * constants.SCALE)
+      x = self.rect.x
+      y = self.rect.y
+      self.image = load_png('osmos_64.png')
+      self.image = pygame.transform.scale(self.image, (int(self.radius * constants.SCALE), int(self.radius * constants.SCALE)))
+      # self.rect.inflate_ip(-constants.RADIUS_CHANGE*constants.SCALE, -constants.RADIUS_CHANGE*constants.SCALE)
+      self.rect = self.image.get_rect()
+      self.rect.x = x
+      self.rect.y = y
 
     return collided
   

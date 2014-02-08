@@ -41,7 +41,7 @@ def main():
   # Event loop
   while 1:
     # Make sure game doesn't run at more than 60 frames per second
-    clock.tick(30)
+    clock.tick(60)
 
     for event in pygame.event.get():
       if event.type == QUIT:
@@ -53,9 +53,11 @@ def main():
           """ Use Escape Key to Quit """
           pygame.display.quit()
           pygame.quit()
-      """
+      # """
       elif event.type == KEYDOWN:
-        pass
+        if event.key == K_UP:
+          sleep(5)
+          """ pass
         if event.key == K_w:
           ball.moveup()
           #player1.moveup()
