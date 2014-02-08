@@ -7,6 +7,7 @@ try:
   import os
   import getopt
   import pygame
+  import random
   from time import sleep
   from socket import *
   from pygame.locals import *
@@ -16,6 +17,9 @@ except ImportError, err:
 
 ASPECT_RATIO = (640, 480)
 SCALE = 10
+GRID_SIDE = 80
+VEL_RANGE = 5
+RAD_RANGE = 8
 
 def load_png(name):
   """ Load image and return image object"""
@@ -30,6 +34,24 @@ def load_png(name):
     print 'Cannot load image:', fullname
     raise SystemExit, message
   return image
+
+
+class World:
+  objects = []
+  def __init__(self):
+    pass
+  def addObject(self, obj):
+    self.objects.append(obj)
+  def randomise(self):
+    for i in range(0, ASPECT_RATIO[0], GRID_SIDE):
+      for j in range(0, ASPECT_RATIO[1], GRID_SIDE):
+        vel = [random.randint(-VEL_RANGE, VEL_RANGE), random.randint(-VEL_RANGE, VEL_RANGE)]
+        rad = random.randint(1, RAD_RANGE)
+        pos = (i * GRID_SIDE + random.uniform(0,1)*GRID_SIDE, j * GRID_SIDE + random.uniform(0,1)*GRID_SIDE)
+        self.addObject(Ball(pos,vel,rad))
+        print self.objects
+        print (i, j)
+    print self
 
 class RandomBall(pygame.sprite.Sprite):
   """A ball that keeps on moving in a particular direction
@@ -218,11 +240,13 @@ def main():
   speed = 4
   rand = ((0.1 * (random.randint(5,8))))
 
-  ball = Ball((50,0),[0, 0], 5)
-  ball2 = Ball((0,50),[0, 0], 15)
+  world = World()
+  world.randomise()
+  # ball = Ball((50,0),[0, 0], 5)
+  # ball2 = Ball((0,50),[0, 0], 15)
 
   # Initialise sprites
-  ballsprites = pygame.sprite.RenderPlain(ball, ball2)
+  ballsprites = pygame.sprite.RenderPlain(world.objects[0], world.objects[1])
 
   # Blit everything to the screen
   screen.blit(background, (0, 0))
@@ -240,33 +264,34 @@ def main():
       if event.type == QUIT:
         return
       elif event.type == KEYDOWN:
-        if event.key == K_w:
-          ball.moveup()
-          #player1.moveup()
-        if event.key == K_s:
-            ball.movedown()
-        if event.key == K_a:
-            ball.moveleft()
-        if event.key == K_d:
-            ball.moveright()
-          #player1.movedown()
-        if event.key == K_UP:
-          ball2.moveup()
-          #player2.moveup()
-        if event.key == K_DOWN:
-          ball2.movedown()
-        if event.key == K_LEFT:
-          ball2.moveleft()
-        if event.key == K_RIGHT:
-          ball2.moveright()
-          #player2.movedown()
-      elif event.type == KEYUP:
-        if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
-          pass
-          # ball.vel = [0, 0]
-          # ball.state = "still"
-        if event.key == K_UP or event.key == K_DOWN or event.key == K_LEFT or event.key == K_RIGHT:
-          pass
+        pass
+      #   if event.key == K_w:
+      #     ball.moveup()
+      #     #player1.moveup()
+      #   if event.key == K_s:
+      #       ball.movedown()
+      #   if event.key == K_a:
+      #       ball.moveleft()
+      #   if event.key == K_d:
+      #       ball.moveright()
+      #     #player1.movedown()
+      #   if event.key == K_UP:
+      #     ball2.moveup()
+      #     #player2.moveup()
+      #   if event.key == K_DOWN:
+      #     ball2.movedown()
+      #   if event.key == K_LEFT:
+      #     ball2.moveleft()
+      #   if event.key == K_RIGHT:
+      #     ball2.moveright()
+      #     #player2.movedown()
+      # elif event.type == KEYUP:
+      #   if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
+      #     pass
+      #     # ball.vel = [0, 0]
+      #     # ball.state = "still"
+      #   if event.key == K_UP or event.key == K_DOWN or event.key == K_LEFT or event.key == K_RIGHT:
+      #     pass
           # ball2.vel = [0, 0]
           # ball2.state = "still"
         """if event.key == K_w or event.key == K_s:
@@ -277,9 +302,9 @@ def main():
           #player2.movepos = [0,0]
           #player2.state = "still"
         """
+    screen.blit(background, world.objects[0].rect, world.objects[0].rect)
+    screen.blit(background, world.objects[1].rect, world.objects[1].rect)
 
-    screen.blit(background, ball.rect, ball.rect)
-    screen.blit(background, ball2.rect, ball2.rect)
 
     ballsprites.update()
     # playersprites.update()
