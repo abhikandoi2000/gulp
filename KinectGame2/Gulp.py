@@ -34,6 +34,126 @@ def load_png(name):
     raise SystemExit, message
   return image, image.get_rect()
 
+class RandomBall(pygame.sprite.Sprite):
+  """A ball that keeps on moving in a particular direction
+  Returns: randomball object
+  Functions: update, calcnewpos
+  Attributes: area, vector"""
+
+  def __init__(self, (xy), vector):
+    pygame.sprite.Sprite.__init__(self)
+    self.image, self.rect = load_png('ball.png')
+    screen = pygame.display.get_surface()
+    self.area = screen.get_rect()
+    self.vector = vector
+    self.speed = 10
+    self.hit = 0
+    self.state = "still"
+    self.movepos = [1, 1]
+    self.rect.x = xy[0]
+    self.rect.y = xy[1]
+
+  def updateDirectionOnCollisionWith(object):
+    """
+    # detect for each randomball
+    if randomball in randomballs:
+      if self.rect.colliderect(randomball.rect):
+        tl = not randomball.area.collidepoint(newpos.topleft)
+        tr = not randomball.area.collidepoint(newpos.topright)
+        bl = not randomball.area.collidepoint(newpos.bottomleft)
+        br = not randomball.area.collidepoint(newpos.bottomright)
+        if dx > 0:
+          # hit from the left side
+          self.rect.right = randomball.rect.left
+        if dx < 0:
+          # hit from the right side
+          self.rect.left = randomball.rect.right
+        if dy > 0:
+          # hit from the top side
+          self.rect.bottom = randomball.rect.top
+        if dy < 0:
+          # hit from the bottom side
+          self.rect.top = randomball.rect.bottom
+    """
+    return
+
+  def move(self, rect, vector):
+    """dpos - change in position
+       eg: [1, 1] : move 1 unit in x and one in y
+    """
+    (angle,z) = vector
+    (dx,dy) = (z * math.cos(angle), z * math.sin(angle))
+    newpos = rect.move(dx, dy)
+
+    # self.updateDirectionOnCollisionWith(randomballs)
+    return newpos
+  
+  def update(self):
+    newpos = self.move(self.rect, self.vector)
+    # newpos = self.calcnewpos(self.rect, self.vector)
+    self.rect = newpos
+    (angle,z) = self.vector
+
+    if not self.area.contains(newpos):
+      tl = not self.area.collidepoint(newpos.topleft)
+      tr = not self.area.collidepoint(newpos.topright)
+      bl = not self.area.collidepoint(newpos.bottomleft)
+      br = not self.area.collidepoint(newpos.bottomright)
+      if tr and tl or (br and bl):
+        angle = -angle
+      if tl and bl:
+        #self.offcourt()
+        angle = math.pi - angle
+      if tr and br:
+        angle = math.pi - angle
+        #self.offcourt()
+    else:
+      # Deflate the rectangles so you can't catch a ball behind the bat
+      player1.rect.inflate(-3, -3)
+      player2.rect.inflate(-3, -3)
+
+      # Do ball and bat collide?
+      # Note I put in an odd rule that sets self.hit to 1 when they collide, and unsets it in the next
+      # iteration. this is to stop odd ball behaviour where it finds a collision *inside* the
+      # bat, the ball reverses, and is still inside the bat, so bounces around inside.
+      # This way, the ball can always escape and bounce away cleanly
+      if self.rect.colliderect(player1.rect) == 1 and not self.hit:
+        angle = math.pi - angle
+        self.hit = not self.hit
+      elif self.rect.colliderect(player2.rect) == 1 and not self.hit:
+        angle = math.pi - angle
+        self.hit = not self.hit
+      elif self.hit:
+        self.hit = not self.hit
+    self.vector = (angle,z)
+
+  def calcnewpos(self, rect, vector):
+    (angle,z) = vector
+    (dx,dy) = (z * math.cos(angle),z * math.sin(angle))
+    return rect.move(dx,dy)
+  
+  def moveup(self):
+    self.movepos[1] = self.movepos[1] - (self.speed)
+    self.state = "moveup"
+
+  def moveleft(self):
+    self.movepos[0] = self.movepos[0] - (self.speed)
+    self.state = "moveleft"
+
+  def moveright(self):
+    self.movepos[0] = self.movepos[0] + (self.speed)
+    self.state = "moveright"
+
+  def movedown(self):
+    self.movepos[1] = self.movepos[1] + (self.speed)
+    self.state = "movedown"
+
+"""Group for random object testing
+"""
+class RandomObjectGroup(pygame.sprite.Group):
+  def __init__(self):
+    pygame.sprite.Group.__init__(self);
+
 class Ball(pygame.sprite.Sprite):
   """A ball that will move across the screen
   Returns: ball object
@@ -92,7 +212,7 @@ class Ball(pygame.sprite.Sprite):
 
   def calcnewpos(self, rect, vector):
     (angle,z) = vector
-    (dx,dy) = (z * math.cos(angle),z * math.sin(angle))
+    (dx,dy) = (z * math.cos(angle), z * math.sin(angle))
     return rect.move(dx,dy)
   
   def moveup(self):
@@ -165,12 +285,14 @@ def main():
   # Initialise ball
   speed = 13
   rand = ((0.1 * (random.randint(5,8))))
-  ball = Ball((0,0),(0.47,speed))
-  ball2 = Ball((0,0),(0.47,speed))
+  ball = Ball((0,0),(0.47, speed))
+  
+  ball2 = RandomBall((0,0),(0.47, speed))
+  ball3 = RandomBall((100,0),(-1, speed))
 
   # Initialise sprites
   playersprites = pygame.sprite.RenderPlain((player1, player2))
-  ballsprites = pygame.sprite.RenderPlain(ball, ball2)
+  ballsprites = pygame.sprite.RenderPlain(ball, ball2, ball3)
 
   # Blit everything to the screen
   screen.blit(background, (0, 0))
@@ -226,6 +348,7 @@ def main():
 
     screen.blit(background, ball.rect, ball.rect)
     screen.blit(background, ball2.rect, ball2.rect)
+    screen.blit(background, ball3.rect, ball3.rect)
     screen.blit(background, player1.rect, player1.rect)
     screen.blit(background, player2.rect, player2.rect)
     ballsprites.update()
