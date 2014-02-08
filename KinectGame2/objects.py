@@ -37,6 +37,7 @@ class WorldObject(pygame.sprite.Sprite):
     
     self.area = screen.get_rect()
     self.velocity = velocity
+    self.radius = radius
     self.hit = 1
 
   def updateDirectionOnCollisionWith(self, objects, dx, dy):
@@ -49,35 +50,57 @@ class WorldObject(pygame.sprite.Sprite):
     
     (z, angle) = polar(self.velocity)
     
+    newtopleft = (self.rect.topleft[0] + dx, self.rect.topleft[1] + dy)
+    newtopright = (self.rect.topright[0] + dx, self.rect.topright[1] + dy)
+    newbottomleft = (self.rect.bottomleft[0] + dx,  self.rect.bottomleft[1] + dy)
+    newbottomright = (self.rect.bottomright[0] + dx, self.rect.bottomright[1] + dy)
+    
     # detect for each WorldObject
     for obj in [obj for obj in objects if self != obj]:
+      tl = not obj.rect.collidepoint(newtopleft)
+      tr = not obj.rect.collidepoint(newtopright)
+      bl = not obj.rect.collidepoint(newbottomleft)
+      br = not obj.rect.collidepoint(newbottomright)
       if self.rect.colliderect(obj.rect):
         collided = True
         obj.rect.inflate(-3, -3)
 
         if not self.hit:
-          # finalVelocity = 
+
+          self.velocity = (
+            self.velocity * (self.radius - obj.radius)
+            + 2 * obj.radius * obj.velocity
+            ) / (obj.radius + self.radius)
+
+
+          obj.velocity = (
+            obj.velocity * (obj.radius - self.radius)
+            + 2 * self.radius * self.velocity
+            ) / (obj.radius + self.radius)
+
+          print self.velocity, obj.velocity
+          
           # angle = math.pi - angle
-          tl = not obj.rect.collidepoint(self.rect.topleft)
-          tr = not obj.rect.collidepoint(self.rect.topright)
-          bl = not obj.rect.collidepoint(self.rect.bottomleft)
-          br = not obj.rect.collidepoint(self.rect.bottomright)
-          if tr and br:
-            # hit from the left side
-            self.rect.right = obj.rect.left
-            angle = math.pi - angle
-          elif bl and tl:
-            # hit from the right side
-            self.rect.left = obj.rect.right
-            angle = math.pi - angle
-          if bl and br:
-            # hit from the top side
-            self.rect.bottom = obj.rect.top
-            angle = 2 * math.pi - angle
-          if tl and tr:
-            # hit from the bottom side
-            self.rect.top = obj.rect.bottom
-            angle = -1 * angle
+          # tl = not obj.rect.collidepoint(self.rect.topleft)
+          # tr = not obj.rect.collidepoint(self.rect.topright)
+          # bl = not obj.rect.collidepoint(self.rect.bottomleft)
+          # br = not obj.rect.collidepoint(self.rect.bottomright)
+          # if tr and br:
+          #   # hit from the left side
+          #   self.rect.right = obj.rect.left
+          #   angle = math.pi - angle
+          # elif bl and tl:
+          #   # hit from the right side
+          #   self.rect.left = obj.rect.right
+          #   angle = math.pi - angle
+          # if bl and br:
+          #   # hit from the top side
+          #   self.rect.bottom = obj.rect.top
+          #   angle = 2 * math.pi - angle
+          # if tl and tr:
+          #   # hit from the bottom side
+          #   self.rect.top = obj.rect.bottom
+          #   angle = -1 * angle
           
           self.hit = not self.hit
         elif self.hit:
@@ -94,7 +117,7 @@ class WorldObject(pygame.sprite.Sprite):
     
     # (angle,z) = vector
     
-    (dx, dy) = (self.velocity.real, self.velocity.imag)
+    (dx, dy) = (math.ceil(self.velocity.real), math.ceil(self.velocity.imag))
     collided = self.updateDirectionOnCollisionWith(self.world.objects, dx, dy)
     if not collided:
       self.rect = self.rect.move(dx, dy)
