@@ -48,6 +48,12 @@ def main():
       if event.type == QUIT:
         pygame.quit()
         return
+      if event.type == KEYDOWN:
+        pass
+        if event.key == K_ESCAPE:
+          """ Use Escape Key to Quit """
+          pygame.display.quit()
+          pygame.quit()
       """
       elif event.type == KEYDOWN:
         pass
