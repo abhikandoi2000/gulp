@@ -17,9 +17,9 @@ except ImportError, err:
 
 ASPECT_RATIO = (640, 480)
 SCALE = 10
-GRID_SIDE = 80
-VEL_RANGE = 5
-RAD_RANGE = 8
+GRID_SIDE = 160
+VEL_RANGE = 2
+RAD_RANGE = 6
 
 def load_png(name):
   """ Load image and return image object"""
@@ -46,12 +46,11 @@ class World:
     for i in range(0, ASPECT_RATIO[0], GRID_SIDE):
       for j in range(0, ASPECT_RATIO[1], GRID_SIDE):
         vel = [random.randint(-VEL_RANGE, VEL_RANGE), random.randint(-VEL_RANGE, VEL_RANGE)]
-        rad = random.randint(1, RAD_RANGE)
-        pos = (i * GRID_SIDE + random.uniform(0,1)*GRID_SIDE, j * GRID_SIDE + random.uniform(0,1)*GRID_SIDE)
+        rad = random.randint(RAD_RANGE/2, RAD_RANGE)
+        randX = int(random.uniform(0,1)*GRID_SIDE)
+        randY = int(random.uniform(0,1)*GRID_SIDE)
+        pos = (i + randX, j + randY)
         self.addObject(Ball(pos,vel,rad))
-        print self.objects
-        print (i, j)
-    print self
 
 class RandomBall(pygame.sprite.Sprite):
   """A ball that keeps on moving in a particular direction
@@ -246,7 +245,7 @@ def main():
   # ball2 = Ball((0,50),[0, 0], 15)
 
   # Initialise sprites
-  ballsprites = pygame.sprite.RenderPlain(world.objects[0], world.objects[1])
+  ballsprites = pygame.sprite.RenderPlain(world.objects)
 
   # Blit everything to the screen
   screen.blit(background, (0, 0))
@@ -302,8 +301,8 @@ def main():
           #player2.movepos = [0,0]
           #player2.state = "still"
         """
-    screen.blit(background, world.objects[0].rect, world.objects[0].rect)
-    screen.blit(background, world.objects[1].rect, world.objects[1].rect)
+    for obj in world.objects:
+      screen.blit(background, obj.rect, obj.rect)
 
 
     ballsprites.update()
