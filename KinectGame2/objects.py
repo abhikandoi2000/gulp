@@ -98,7 +98,11 @@ class WorldObject(pygame.sprite.Sprite):
       # self.rect.height = int(self.radius * constants.SCALE)
       x = self.rect.x
       y = self.rect.y
-      self.image = load_png('osmos_64.png')
+      if type(self) == PlayerObject:
+        src = 'osmos_player.png'
+      else:
+        src = 'osmos_64.png'
+      self.image = load_png(src)
       self.image = pygame.transform.scale(self.image, (int(self.radius*constants.SCALE), int(self.radius*constants.SCALE)))
       
       self.rect = self.image.get_rect()
