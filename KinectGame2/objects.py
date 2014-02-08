@@ -162,59 +162,45 @@ class WorldObject(pygame.sprite.Sprite):
 class PlayerObject(WorldObject):
   def __init__(self, initPos, velocity, radius, world):
     super(PlayerObject, self).__init__(initPos, velocity, radius, world, 'osmos_player.png')
+    self.action = "still"
     # print self
 
-  def moveup(self):
+  def update(self):
     x = self.rect.x
     y = self.rect.y
     radius = self.radius
 
+    self.image = pygame.transform.scale(self.image, (0, 0))
     self.rect.x = 5000
     self.image = load_png('osmos_player.png')
     self.image = pygame.transform.scale(self.image, (int(radius * constants.SCALE), int(radius * constants.SCALE)))
     self.rect = self.image.get_rect()
     self.rect.x = x
-    self.rect.y = y - 10
+    self.rect.y = y
+    dx = 0
+    dy = 0
+    if self.action == "moveup":
+      dy = -10
+    if self.action == "movedown":
+      dy = 10
+    if self.action == "moveleft":
+      dx = -10
+    if self.action == "moveright":
+      dx = 10
+    self.rect.x += dx
+    self.rect.y += dy
+    self.action = "still"
+
+  def moveup(self):
+    self.action = "moveup"
     # self.rect = self.rect.move(0, -10)
 
   def movedown(self):
-    x = self.rect.x
-    y = self.rect.y
-    radius = self.radius
-
-    self.rect.x = 5000
-    self.image = load_png('osmos_player.png')
-    self.image = pygame.transform.scale(self.image, (int(radius * constants.SCALE), int(radius * constants.SCALE)))
-
-    self.rect = self.image.get_rect()
-    self.rect.x = x
-    self.rect.y = y + 10
-    # self.rect = self.rect.move(0, 10)
+    self.action = "movedown"
 
   def moveleft(self):
-    x = self.rect.x
-    y = self.rect.y
-    radius = self.radius
-
-    self.rect.x = 5000
-    self.image = load_png('osmos_player.png')
-    self.image = pygame.transform.scale(self.image, (int(radius * constants.SCALE), int(radius * constants.SCALE)))
-
-    self.rect = self.image.get_rect()
-    self.rect.x = x - 10
-    self.rect.y = y
-    # self.rect = self.rect.move(-10, 0)
+    self.action = "moveleft"
 
   def moveright(self):
-    x = self.rect.x
-    y = self.rect.y
-    radius = self.radius
-
-    self.rect.x = 5000
-    self.image = load_png('osmos_player.png')
-    self.image = pygame.transform.scale(self.image, (int(radius * constants.SCALE), int(radius * constants.SCALE)))
-
-    self.rect = self.image.get_rect()
-    self.rect.x = x + 10
-    self.rect.y = y
+    self.action = "moveright"
     # self.rect = self.rect.move(10, 0)
