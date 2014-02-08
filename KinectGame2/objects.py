@@ -27,7 +27,6 @@ class WorldObject(pygame.sprite.Sprite):
     pygame.sprite.Sprite.__init__(self)
     self.world = world
     self.image = load_png(src)
-    print radius
     self.image = pygame.transform.scale(self.image, (radius*constants.SCALE, radius*constants.SCALE))
     
     self.rect = self.image.get_rect()
@@ -62,7 +61,9 @@ class WorldObject(pygame.sprite.Sprite):
       tr = not obj.rect.collidepoint(newtopright)
       bl = not obj.rect.collidepoint(newbottomleft)
       br = not obj.rect.collidepoint(newbottomright)
-      if self.rect.colliderect(obj.rect):
+      # if self.rect.colliderect(obj.rect):
+      if pygame.sprite.collide_circle(self, obj):
+        print self, obj
         collided = True
         if self.radius > obj.radius:
           self.radius = self.radius + constants.RADIUS_CHANGE
@@ -101,7 +102,7 @@ class WorldObject(pygame.sprite.Sprite):
       self.rect = self.image.get_rect()
       self.rect.x = x
       self.rect.y = y
-      print self.rect, self.image
+      # print self.rect, self.image
     elif collided == -1:
       x = self.rect.x
       y = self.rect.y
@@ -162,7 +163,7 @@ class WorldObject(pygame.sprite.Sprite):
 class PlayerObject(WorldObject):
   def __init__(self, initPos, velocity, radius, world):
     super(PlayerObject, self).__init__(initPos, velocity, radius, world, 'osmos_player.png')
-    print self
+    # print self
 
   def moveup(self):
     self.rect = self.rect.move(0, -3)
