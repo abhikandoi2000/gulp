@@ -16,6 +16,8 @@ except ImportError, err:
 def main():
   # Initialise screen
   pygame.init()
+  # For full screen support flag
+  # screen = pygame.display.set_mode(constants.ASPECT_RATIO, pygame.FULLSCREEN)
   screen = pygame.display.set_mode(constants.ASPECT_RATIO)
   pygame.display.set_caption(constants.APP_TITLE)
 
