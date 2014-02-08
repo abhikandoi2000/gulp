@@ -17,7 +17,7 @@ class World:
         speed = random.randint(2, constants.VEL_RANGE)
         direction = random.uniform(-1 * (math.pi / 2), (3 * math.pi) / 2)
         velocity = speed * math.cos(direction) + speed * math.sin(direction)*1j
-        print velocity
+        # print velocity
         radius = random.randint(constants.RAD_RANGE/2, constants.RAD_RANGE)
         randX = int(random.uniform(0,1)*(constants.GRID_SIDE-radius))
         randY = int(random.uniform(0,1)*(constants.GRID_SIDE-radius))
