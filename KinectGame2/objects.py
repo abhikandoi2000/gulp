@@ -121,7 +121,6 @@ class WorldObject(pygame.sprite.Sprite):
     return collided
   
   def update(self):
-    self.move()
     (z, angle) = polar(self.velocity)
 
     if not self.area.contains(self.rect):
@@ -129,14 +128,29 @@ class WorldObject(pygame.sprite.Sprite):
       tr = not self.area.collidepoint(self.rect.topright)
       bl = not self.area.collidepoint(self.rect.bottomleft)
       br = not self.area.collidepoint(self.rect.bottomright)
+      
       if tr and tl or (br and bl):
         angle = -angle
       if tl and bl:
         angle = math.pi - angle
       if tr and br:
         angle = math.pi - angle
-    
+      if tr and tl and br and bl:
+        if self.rect.top > self.area.bottom:
+          angle = -angle
+          self.rect.move(0, self.area.bottom-self.rect.top-1)
+        if self.rect.bottom < self.area.top:
+          angle = -angle
+          self.rect.move(0, self.area.top-self.rect.bottom+1) 
+        if self.rect.left > self.area.right:
+          angle = math.pi - angle
+          self.rect.move(self.area.right-self.rect.left-1, 0)
+        if self.rect.right < self.area.left:
+          angle = math.pi - angle
+          self.rect.move(self.area.left-self.rect.right+1,0)  
+
     self.velocity = z * math.cos(angle) + z * math.sin(angle)*1j
+    self.move()
     
     """
     else:
