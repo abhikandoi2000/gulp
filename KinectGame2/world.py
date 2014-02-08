@@ -1,10 +1,12 @@
-from objects import WorldObject
+from objects import WorldObject, PlayerObject
 import random, math
 import constants
 
 class World:
   objects = []
   def __init__(self):
+    self.randomise()
+    self.createPlayers()
     pass
   def addObject(self, obj):
     self.objects.append(obj)
@@ -21,3 +23,13 @@ class World:
         randY = int(random.uniform(0,1)*(constants.GRID_SIDE-radius))
         pos = (i + randX, j + randY)
         self.addObject(WorldObject(pos, velocity, radius, self))
+  def createPlayers(self):
+    for i in range(0, constants.NUM_PLAYERS):
+      speed = 0
+      direction = random.uniform(0, 2 * math.pi)
+      velocity = speed * math.cos(direction) + speed * math.sin(direction)*1j
+      radius = constants.PLAYER_RADIUS
+      randX = int(random.uniform(0,1)*(constants.GRID_SIDE-radius))
+      randY = int(random.uniform(0,1)*(constants.GRID_SIDE-radius))
+      pos = (randX, randY)
+      self.addObject(PlayerObject(pos, velocity, radius, self))

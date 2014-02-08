@@ -27,7 +27,6 @@ def main():
   background.fill((0, 0, 0))
 
   world = World()
-  world.randomise()
 
   # Initialise sprites
   ballsprites = pygame.sprite.RenderPlain(world.objects)

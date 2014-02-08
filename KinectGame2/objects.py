@@ -22,10 +22,11 @@ class WorldObject(pygame.sprite.Sprite):
   Functions: update, calcnewpos
   Attributes: area, vector"""
 
-  def __init__(self, initPos, velocity, radius, world):
+  def __init__(self, initPos, velocity, radius, world, src = 'osmos_64.png'):
     pygame.sprite.Sprite.__init__(self)
     self.world = world
-    self.image = load_png('osmos_64.png')
+    self.image = load_png(src)
+    print radius
     self.image = pygame.transform.scale(self.image, (radius*constants.SCALE, radius*constants.SCALE))
     
     self.rect = self.image.get_rect()
@@ -153,3 +154,8 @@ class WorldObject(pygame.sprite.Sprite):
   def movedown(self):
     self.movepos[1] = self.movepos[1] + (self.speed)
     self.state = "movedown"
+
+class PlayerObject(WorldObject):
+  def __init__(self, initPos, velocity, radius, world):
+    super(PlayerObject, self).__init__(initPos, velocity, radius, world, 'osmos_player.png')
+    print self
