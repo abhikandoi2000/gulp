@@ -48,32 +48,26 @@ def main():
         pygame.quit()
         return
       if event.type == KEYDOWN:
-        pass
         if event.key == K_ESCAPE:
           """ Use Escape Key to Quit """
           pygame.display.quit()
           pygame.quit()
-      elif event.type == KEYDOWN:
         if event.key == K_UP:
-          world.objects[-1:][0].movetop()
+          world.objects[-1:][0].moveup()
         if event.key == K_DOWN:
           world.objects[-1:][0].movedown()
         if event.key == K_LEFT:
           world.objects[-1:][0].moveleft()
         if event.key == K_RIGHT:
           world.objects[-1:][0].moveright()
-        """
         if event.key == K_w:
           ball.moveup()
-          #player1.moveup()
         if event.key == K_s:
-            ball.movedown()
+          ball.movedown()
         if event.key == K_a:
-            ball.moveleft()
+          ball.moveleft()
         if event.key == K_d:
-            ball.moveright()
-          #player1.movedown()
-        """
+          ball.moveright()
       elif event.type == KEYUP:
         """
         if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
