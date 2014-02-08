@@ -161,7 +161,7 @@ class WorldObject(pygame.sprite.Sprite):
 
 class PlayerObject(WorldObject):
   def __init__(self, initPos, velocity, radius, world):
-    super(PlayerObject, self).__init__(initPos, velocity, radius, world, 'osmos_player_64.png')
+    super(PlayerObject, self).__init__(initPos, velocity, radius, world, 'osmos_player.png')
     # print self
 
   def moveup(self):
@@ -170,7 +170,7 @@ class PlayerObject(WorldObject):
     radius = self.radius
 
     self.rect.x = 5000
-    self.image = load_png('osmos_player_64.png')
+    self.image = load_png('osmos_player.png')
     self.image = pygame.transform.scale(self.image, (int(radius * constants.SCALE), int(radius * constants.SCALE)))
     self.rect = self.image.get_rect()
     self.rect.x = x
@@ -183,7 +183,7 @@ class PlayerObject(WorldObject):
     radius = self.radius
 
     self.rect.x = 5000
-    self.image = load_png('osmos_player_64.png')
+    self.image = load_png('osmos_player.png')
     self.image = pygame.transform.scale(self.image, (int(radius * constants.SCALE), int(radius * constants.SCALE)))
 
     self.rect = self.image.get_rect()
@@ -197,7 +197,7 @@ class PlayerObject(WorldObject):
     radius = self.radius
 
     self.rect.x = 5000
-    self.image = load_png('osmos_player_64.png')
+    self.image = load_png('osmos_player.png')
     self.image = pygame.transform.scale(self.image, (int(radius * constants.SCALE), int(radius * constants.SCALE)))
 
     self.rect = self.image.get_rect()
@@ -211,7 +211,7 @@ class PlayerObject(WorldObject):
     radius = self.radius
 
     self.rect.x = 5000
-    self.image = load_png('osmos_player_64.png')
+    self.image = load_png('osmos_player.png')
     self.image = pygame.transform.scale(self.image, (int(radius * constants.SCALE), int(radius * constants.SCALE)))
 
     self.rect = self.image.get_rect()
