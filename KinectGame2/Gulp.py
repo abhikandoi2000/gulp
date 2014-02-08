@@ -53,17 +53,16 @@ def main():
           """ Use Escape Key to Quit """
           pygame.display.quit()
           pygame.quit()
-      """
       elif event.type == KEYDOWN:
         if event.key == K_UP:
-          sleep(5)
+          world.objects[-1:][0].movetop()
         if event.key == K_DOWN:
-          # world.objects[::-1][0].movedown()
-          pass
+          world.objects[-1:][0].movedown()
         if event.key == K_LEFT:
-          ball2.moveleft()
+          world.objects[-1:][0].moveleft()
         if event.key == K_RIGHT:
-          ball2.moveright()
+          world.objects[-1:][0].moveright()
+        """
         if event.key == K_w:
           ball.moveup()
           #player1.moveup()
@@ -74,27 +73,16 @@ def main():
         if event.key == K_d:
             ball.moveright()
           #player1.movedown()
-        if event.key == K_UP:
-          ball2.moveup()
-          #player2.moveup()
-          #player2.movedown()
+        """
       elif event.type == KEYUP:
+        """
         if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
           pass
           # ball.vel = [0, 0]
           # ball.state = "still"
+        """
         if event.key == K_UP or event.key == K_DOWN or event.key == K_LEFT or event.key == K_RIGHT:
           pass
-          # ball2.vel = [0, 0]
-          # ball2.state = "still"
-        if event.key == K_w or event.key == K_s:
-          ball.state = "still"
-          #player1.movepos = [0,0]
-          #player1.state = "still"
-        if event.key == K_UP or event.key == K_DOWN:
-          #player2.movepos = [0,0]
-          #player2.state = "still"
-        """
     for obj in world.objects:
       screen.blit(background, obj.rect, obj.rect)
 

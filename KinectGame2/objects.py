@@ -66,7 +66,6 @@ class WorldObject(pygame.sprite.Sprite):
         collided = True
         if self.radius > obj.radius:
           self.radius = self.radius + constants.RADIUS_CHANGE
-          # obj.radius = obj.radius - constants.RADIUS_CHANGE
           if obj.radius < 0:
             obj.radius = 0
             obj.rect.x = 5000
@@ -76,14 +75,8 @@ class WorldObject(pygame.sprite.Sprite):
           if self.radius < 0:
             self.radius = 0
             self.rect.x = 5000
-          # obj.radius = obj.radius + constants.RADIUS_CHANGE
           return -1
     return 0
-        # obj.rect.inflate(-3, -3)
-        # if not self.hit:
-          # self.hit = not self.hit
-
-    # return collided
 
   def move(self):
     """dpos - change in position
@@ -94,32 +87,33 @@ class WorldObject(pygame.sprite.Sprite):
     collided = self.updateDirectionOnCollisionWith(self.world.objects, dx, dy)
     self.rect = self.rect.move(dx, dy)
     if collided == 1:
-      # self.rect.width = int(self.radius * constants.SCALE)
-      # self.rect.height = int(self.radius * constants.SCALE)
       x = self.rect.x
       y = self.rect.y
+
       if type(self) == PlayerObject:
         src = 'osmos_player.png'
       else:
         src = 'osmos_64.png'
+      
       self.image = load_png(src)
       self.image = pygame.transform.scale(self.image, (int(self.radius*constants.SCALE), int(self.radius*constants.SCALE)))
       
       self.rect = self.image.get_rect()
       self.rect.x = x
       self.rect.y = y
-      # self.image = pygame.transform.scale(self.image, (int(self.radius * constants.SCALE), int(self.radius * constants.SCALE)))
-      # self.rect.inflate_ip(constants.RADIUS_CHANGE*constants.SCALE, constants.RADIUS_CHANGE*constants.SCALE)
-      # self.re
       print self.rect, self.image
     elif collided == -1:
-      # self.rect.width = int(self.radius * constants.SCALE)
-      # self.rect.height = int(self.radius * constants.SCALE)
       x = self.rect.x
       y = self.rect.y
-      self.image = load_png('osmos_64.png')
+      
+      if type(self) == PlayerObject:
+        src = 'osmos_player.png'
+      else:
+        src = 'osmos_64.png'
+      
+      self.image = load_png(src)
       self.image = pygame.transform.scale(self.image, (int(self.radius * constants.SCALE), int(self.radius * constants.SCALE)))
-      # self.rect.inflate_ip(-constants.RADIUS_CHANGE*constants.SCALE, -constants.RADIUS_CHANGE*constants.SCALE)
+      
       self.rect = self.image.get_rect()
       self.rect.x = x
       self.rect.y = y
@@ -165,23 +159,19 @@ class WorldObject(pygame.sprite.Sprite):
         self.hit = not self.hit
     """
 
-  def moveup(self):
-    self.movepos[1] = self.movepos[1] - (self.speed)
-    self.state = "moveup"
-
-  def moveleft(self):
-    self.movepos[0] = self.movepos[0] - (self.speed)
-    self.state = "moveleft"
-
-  def moveright(self):
-    self.movepos[0] = self.movepos[0] + (self.speed)
-    self.state = "moveright"
-
-  def movedown(self):
-    self.movepos[1] = self.movepos[1] + (self.speed)
-    self.state = "movedown"
-
 class PlayerObject(WorldObject):
   def __init__(self, initPos, velocity, radius, world):
     super(PlayerObject, self).__init__(initPos, velocity, radius, world, 'osmos_player.png')
     print self
+
+  def moveup(self):
+    self.rect = self.rect.move(0, -3)
+
+  def movedown(self):
+    self.rect = self.rect.move(0, 3)
+
+  def moveleft(self):
+    self.rect = self.rect.move(-3, 0)
+
+  def moveright(self):
+    self.rect = self.rect.move(3, 0)

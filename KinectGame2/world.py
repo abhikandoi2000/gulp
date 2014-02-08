@@ -25,9 +25,9 @@ class World:
         self.addObject(WorldObject(pos, velocity, radius, self))
   def createPlayers(self):
     for i in range(0, constants.NUM_PLAYERS):
-      speed = 0
-      direction = random.uniform(0, 2 * math.pi)
-      velocity = speed * math.cos(direction) + speed * math.sin(direction)*1j
+      speed = 3
+      direction = 0
+      velocity = 0 + 0*1j
       radius = constants.PLAYER_RADIUS
       randX = int(random.uniform(0,1)*(constants.GRID_SIDE-radius))
       randY = int(random.uniform(0,1)*(constants.GRID_SIDE-radius))
