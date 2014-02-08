@@ -41,7 +41,7 @@ def main():
   # Event loop
   while 1:
     # Make sure game doesn't run at more than 60 frames per second
-    clock.tick(60)
+    clock.tick(30)
 
     for event in pygame.event.get():
       if event.type == QUIT:
