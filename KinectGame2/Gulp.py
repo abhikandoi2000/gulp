@@ -40,7 +40,7 @@ class RandomBall(pygame.sprite.Sprite):
   Functions: update, calcnewpos
   Attributes: area, vector"""
 
-  def __init__(self, (xy), vector):
+  def __init__(self, (xy), vector, width = 20):
     pygame.sprite.Sprite.__init__(self)
     self.image, self.rect = load_png('ball.png')
     screen = pygame.display.get_surface()
@@ -53,39 +53,48 @@ class RandomBall(pygame.sprite.Sprite):
     self.rect.x = xy[0]
     self.rect.y = xy[1]
 
-  def updateDirectionOnCollisionWith(object):
+  def updateDirectionOnCollisionWith(self, objects, rect, vector, dx, dy):
     """
-    # detect for each randomball
-    if randomball in randomballs:
-      if self.rect.colliderect(randomball.rect):
-        tl = not randomball.area.collidepoint(newpos.topleft)
-        tr = not randomball.area.collidepoint(newpos.topright)
-        bl = not randomball.area.collidepoint(newpos.bottomleft)
-        br = not randomball.area.collidepoint(newpos.bottomright)
-        if dx > 0:
+    checks if the `rect` on moving `(dx, dy)` collides with any of the
+    object in `objects` and updates the direction of motion (`angle`)
+    accordingly
+    """
+    (angle, z) = vector
+    newpos = rect.move(dx, dy)
+    # detect for each RandomBall
+    for obj in [obj for obj in objects if self != obj]:
+      if rect.colliderect(obj.rect):
+        tl = not obj.rect.collidepoint(newpos.topleft)
+        tr = not obj.rect.collidepoint(newpos.topright)
+        bl = not obj.rect.collidepoint(newpos.bottomleft)
+        br = not obj.rect.collidepoint(newpos.bottomright)
+        if tr and br:
           # hit from the left side
-          self.rect.right = randomball.rect.left
-        if dx < 0:
+          self.rect.right = obj.rect.left
+          angle = math.pi - angle
+        elif bl and tl:
           # hit from the right side
-          self.rect.left = randomball.rect.right
-        if dy > 0:
+          self.rect.left = obj.rect.right
+          angle = math.pi - angle
+        """if tl and tr:
           # hit from the top side
-          self.rect.bottom = randomball.rect.top
+          self.rect.bottom = randomball.rect.top  
         if dy < 0:
           # hit from the bottom side
           self.rect.top = randomball.rect.bottom
-    """
-    return
+        """
+    self.vector = (angle, z)
+    (dx, dy) = (z * math.cos(angle), z * math.sin(angle))
+    newpos = rect.move(dx, dy)
+    return newpos
 
   def move(self, rect, vector):
     """dpos - change in position
        eg: [1, 1] : move 1 unit in x and one in y
     """
     (angle,z) = vector
-    (dx,dy) = (z * math.cos(angle), z * math.sin(angle))
-    newpos = rect.move(dx, dy)
-
-    # self.updateDirectionOnCollisionWith(randomballs)
+    (dx, dy) = (z * math.cos(angle), z * math.sin(angle))
+    newpos = self.updateDirectionOnCollisionWith(randomballs, rect, vector, dx, dy)
     return newpos
   
   def update(self):
@@ -288,7 +297,12 @@ def main():
   ball = Ball((0,0),(0.47, speed))
   
   ball2 = RandomBall((0,0),(0.47, speed))
-  ball3 = RandomBall((100,0),(-1, speed))
+  ball3 = RandomBall((200,0),(-1, speed), 40)
+
+  global randomballs
+  randomballs = []
+  randomballs.append(ball2)
+  randomballs.append(ball3)
 
   # Initialise sprites
   playersprites = pygame.sprite.RenderPlain((player1, player2))
