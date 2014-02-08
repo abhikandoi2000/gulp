@@ -166,30 +166,48 @@ class PlayerObject(WorldObject):
     # print self
 
   def update(self):
-    x = self.rect.x
-    y = self.rect.y
-    radius = self.radius
+    # x = self.rect.x
+    # y = self.rect.y
+    # radius = self.radius
 
-    self.image = pygame.transform.scale(self.image, (0, 0))
-    self.rect.x = 5000
-    self.image = load_png('osmos_player.png')
-    self.image = pygame.transform.scale(self.image, (int(radius * constants.SCALE), int(radius * constants.SCALE)))
-    self.rect = self.image.get_rect()
-    self.rect.x = x
-    self.rect.y = y
-    dx = 0
-    dy = 0
+    # self.image = pygame.transform.scale(self.image, (0, 0))
+    # self.rect.x = 5000
+    # self.image = load_png('osmos_player.png')
+    # self.image = pygame.transform.scale(self.image, (int(radius * constants.SCALE), int(radius * constants.SCALE)))
+    # self.rect = self.image.get_rect()
+    # self.rect.x = x
+    # self.rect.y = y
+    # dx = 0
+    # dy = 0
+    # speed = random.randint(2, constants.VEL_RANGE)
+    # direction = random.uniform(-1 * (math.pi / 2), (3 * math.pi) / 2)
+    direction = 0
+    speed = 0
     if self.action == "moveup":
-      dy = -10
+      direction = 3*math.pi/2
+      speed = constants.VEL_CHANGE
+      # dy = -10
     if self.action == "movedown":
-      dy = 10
+      direction = math.pi/2
+      speed = constants.VEL_CHANGE
+      # dy = 10
     if self.action == "moveleft":
-      dx = -10
+      direction = math.pi
+      speed = constants.VEL_CHANGE
+      # dx = -10
     if self.action == "moveright":
-      dx = 10
-    self.rect.x += dx
-    self.rect.y += dy
+      direction = 0
+      speed = constants.VEL_CHANGE
+
+    self.velocity += speed * math.cos(direction) + speed * math.sin(direction)*1j
+    (magnitude, direction) = polar(self.velocity)
+    if  magnitude > constants.VEL_LIMIT:
+      self.velocity = constants.VEL_LIMIT * math.cos(direction) + constants.VEL_LIMIT * math.sin(direction)*1j
+      # dx = 10
+    # self.rect.x += dx
+    # self.rect.y += dy
     self.action = "still"
+    super(PlayerObject, self).update()
 
   def moveup(self):
     self.action = "moveup"
