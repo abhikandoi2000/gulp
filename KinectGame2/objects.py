@@ -115,7 +115,7 @@ class WorldObject(pygame.sprite.Sprite):
       if tr and br:
         angle = math.pi - angle
     
-    # self.vector = (angle,z)
+    self.velocity = z * math.cos(angle) + z * math.sin(angle)*1j
     
     """
     else:
