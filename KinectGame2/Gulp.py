@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 try:
+  from pykinect import nui
+  from pykinect.nui import JointId, SkeletonTrackingState
   import sys
   import getopt
   import pygame
@@ -13,7 +15,20 @@ except ImportError, err:
   print "couldn't load module. %s" % (err)
   sys.exit(2)
 
+KINECTEVENT = pygame.USEREVENT
+
+def post_kinect_event(frame):
+  """Get skeleton events from the Kinect device and post them into the PyGame event queue"""
+  try:
+      pygame.event.post(pygame.event.Event(KINECTEVENT, skeletons = frame.SkeletonData))
+  except:
+      # event queue full
+      pass
+
 def main():
+
+  print KINECTEVENT
+
   # Initialise screen
   pygame.init()
   # For full screen support flag
@@ -37,6 +52,10 @@ def main():
   # Initialise clock
   clock = pygame.time.Clock()
 
+  with nui.Runtine() as kinect:
+    kinect.skeleton_engine.enabled = True
+    kinect.skeleton_frame_ready += post_kinect_event
+  
   # Event loop
   while 1:
     # Make sure game doesn't run at more than 60 frames per second
@@ -46,6 +65,8 @@ def main():
       if event.type == QUIT:
         pygame.quit()
         return
+      if event.type == KINECTEVENT:
+        print "Detected kinect event!"
       if event.type == KEYDOWN:
         # print "keydown"
         if event.key == K_ESCAPE:
