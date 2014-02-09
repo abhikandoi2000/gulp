@@ -182,9 +182,10 @@ class WorldObject(pygame.sprite.Sprite):
     """
 
 class PlayerObject(WorldObject):
-  def __init__(self, initPos, velocity, radius, world):
+  def __init__(self, initPos, velocity, radius, world, color):
     super(PlayerObject, self).__init__(initPos, velocity, radius, world, 'osmos_player.png')
     self.action = "still"
+    self.color = color
     # print self
 
   def update(self):
