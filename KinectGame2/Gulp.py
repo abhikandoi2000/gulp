@@ -52,60 +52,60 @@ def main():
   # Initialise clock
   clock = pygame.time.Clock()
 
-  with nui.Runtine() as kinect:
+  with nui.Runtime() as kinect:
     kinect.skeleton_engine.enabled = True
     kinect.skeleton_frame_ready += post_kinect_event
   
-  # Event loop
-  while 1:
-    # Make sure game doesn't run at more than 60 frames per second
-    clock.tick(60)
+    # Event loop
+    while 1:
+      # Make sure game doesn't run at more than 60 frames per second
+      clock.tick(60)
 
-    for event in pygame.event.get():
-      if event.type == QUIT:
-        pygame.quit()
-        return
-      if event.type == KINECTEVENT:
-        print "Detected kinect event!"
-      if event.type == KEYDOWN:
-        # print "keydown"
-        if event.key == K_ESCAPE:
-          """ Use Escape Key to Quit """
-          pygame.display.quit()
+      for event in pygame.event.get():
+        if event.type == QUIT:
           pygame.quit()
-        if event.key == K_UP:
-          world.objects[-1:][0].moveup()
-        if event.key == K_DOWN:
-          world.objects[-1:][0].movedown()
-        if event.key == K_LEFT:
-          world.objects[-1:][0].moveleft()
-        if event.key == K_RIGHT:
-          world.objects[-1:][0].moveright()
-        if event.key == K_w:
-          world.objects[-2:-1][0].moveup()
-        if event.key == K_s:
-          world.objects[-2:-1][0].movedown()
-        if event.key == K_a:
-          world.objects[-2:-1][0].moveleft()
-        if event.key == K_d:
-          world.objects[-2:-1][0].moveright()
-      elif event.type == KEYUP:
-        # print "keyup"
-        """
-        if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
-          pass
-          # ball.vel = [0, 0]
-          # ball.state = "still"
-        """
-        if event.key == K_UP or event.key == K_DOWN or event.key == K_LEFT or event.key == K_RIGHT:
-          pass
-    for obj in world.objects:
-      screen.blit(background, obj.rect, obj.rect)
+          return
+        if event.type == KINECTEVENT:
+          print "Detected kinect event!"
+        if event.type == KEYDOWN:
+          # print "keydown"
+          if event.key == K_ESCAPE:
+            """ Use Escape Key to Quit """
+            pygame.display.quit()
+            pygame.quit()
+          if event.key == K_UP:
+            world.objects[-1:][0].moveup()
+          if event.key == K_DOWN:
+            world.objects[-1:][0].movedown()
+          if event.key == K_LEFT:
+            world.objects[-1:][0].moveleft()
+          if event.key == K_RIGHT:
+            world.objects[-1:][0].moveright()
+          if event.key == K_w:
+            world.objects[-2:-1][0].moveup()
+          if event.key == K_s:
+            world.objects[-2:-1][0].movedown()
+          if event.key == K_a:
+            world.objects[-2:-1][0].moveleft()
+          if event.key == K_d:
+            world.objects[-2:-1][0].moveright()
+        elif event.type == KEYUP:
+          # print "keyup"
+          """
+          if event.key == K_w or event.key == K_s or event.key == K_a or event.key == K_d:
+            pass
+            # ball.vel = [0, 0]
+            # ball.state = "still"
+          """
+          if event.key == K_UP or event.key == K_DOWN or event.key == K_LEFT or event.key == K_RIGHT:
+            pass
+      for obj in world.objects:
+        screen.blit(background, obj.rect, obj.rect)
 
-    ballsprites.update()
-    ballsprites.draw(screen)
+      ballsprites.update()
+      ballsprites.draw(screen)
 
-    pygame.display.flip()
+      pygame.display.flip()
 
 if __name__ == '__main__':
   main()
