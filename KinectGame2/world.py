@@ -40,6 +40,7 @@ class World:
     pos = (randX, randY)
     player = PlayerObject(pos, velocity, radius, self, color)
     self.addObject(player)
+    print self.objects
     return player
   def process_kinect_event(self, event):
     for skeleton in event.skeletons:
@@ -52,21 +53,21 @@ class World:
               # http://social.msdn.microsoft.com/Forums/is/kinectsdk/thread/b0ef83e1-970a-4c80-bc8f-02af218a0568
               color = 'red'
               for existing_player in self.known_players.values():
-                  if existing_player.active:
-                      if existing_player.color == 'red':
-                        color = 'blue'
-                      break
+                if existing_player.color == 'red':
+                  color = 'blue'
+                break
               player = self.createPlayer(color)
               self.known_players[skeleton.dwTrackingID] = player
               right_hand = skeleton.SkeletonPositions[JointId.HandRight]
               right_pos = skeleton_to_depth_image(right_hand, self.dispInfo.current_w, self.dispInfo.current_h)
               player.last_frame = right_pos
-              print "Player", player.color "has hand position"
+              print "Player", player.color, "has hand position"
               print right_pos
           elif player is not None:
             right_hand = skeleton.SkeletonPositions[JointId.HandRight]
             right_pos = skeleton_to_depth_image(right_hand, self.dispInfo.current_w, self.dispInfo.current_h)
             player.curr_frame = right_pos
-            dX = player.curr_frame[0] - player.last_frame[0] 
-            dY = player.curr_frame[1] - player.last_frame[1] 
+            dX = player.curr_frame[0] - player.last_frame[0]
+            dY = player.curr_frame[1] - player.last_frame[1]
+            # print player.curr_frame, player.last_frame
             player.updateVelocity(dX + dY*1j)

@@ -42,8 +42,6 @@ def main():
 
   world = World()
 
-  # Initialise sprites
-  ballsprites = pygame.sprite.RenderPlain(world.objects)
 
   # Blit everything to the screen
   screen.blit(background, bgrect)
@@ -58,6 +56,9 @@ def main():
   
     # Event loop
     while 1:
+      # Initialise sprites
+      ballsprites = pygame.sprite.RenderPlain(world.objects)
+      
       # Make sure game doesn't run at more than 60 frames per second
       clock.tick(60)
 
@@ -66,7 +67,7 @@ def main():
           pygame.quit()
           return
         if event.type == KINECTEVENT:
-          print "Detected kinect event!"
+          # print "Detected kinect event!"
           world.process_kinect_event(event)
         if event.type == KEYDOWN:
           # print "keydown"

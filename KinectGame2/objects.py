@@ -22,7 +22,7 @@ class WorldObject(pygame.sprite.Sprite):
   Returns: WorldObject object
   Functions: update, calcnewpos
   Attributes: area, vector"""
-
+   
   def __init__(self, initPos, velocity, radius, world, src = 'osmos_64.png'):
     pygame.sprite.Sprite.__init__(self)
     self.world = world
@@ -91,7 +91,7 @@ class WorldObject(pygame.sprite.Sprite):
       y = self.rect.y
 
       if type(self) == PlayerObject:
-        src = 'osmos_player.png'
+        src = 'osmos_player_'+self.color+'.png'
       else:
         src = 'osmos_64.png'
       
@@ -107,7 +107,7 @@ class WorldObject(pygame.sprite.Sprite):
       y = self.rect.y
       
       if type(self) == PlayerObject:
-        src = 'osmos_player.png'
+        src = 'osmos_player_'+self.color+'.png'
       else:
         src = 'osmos_64.png'
       
@@ -183,7 +183,7 @@ class WorldObject(pygame.sprite.Sprite):
 
 class PlayerObject(WorldObject):
   def __init__(self, initPos, velocity, radius, world, color):
-    super(PlayerObject, self).__init__(initPos, velocity, radius, world, 'osmos_player.png')
+    super(PlayerObject, self).__init__(initPos, velocity, radius, world, 'osmos_player_' + color + '.png')
     self.action = "still"
     self.color = color
     # print self
@@ -246,4 +246,8 @@ class PlayerObject(WorldObject):
     self.action = "moveright"
     # self.rect = self.rect.move(10, 0)
   def updateVelocity(self, vel):
-    self.velocity = vel
+    (magnitude, direction) = polar(vel)
+    if  magnitude > constants.VEL_LIMIT:
+      self.velocity = constants.VEL_LIMIT * math.cos(direction) + constants.VEL_LIMIT * math.sin(direction)*1j
+    else:
+      self.velocity = vel
