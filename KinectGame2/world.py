@@ -56,9 +56,9 @@ class World:
                       if existing_player.color == 'red':
                         color = 'blue'
                       break
-              player = createPlayer(color)
+              player = self.createPlayer(color)
               self.known_players[skeleton.dwTrackingID] = player
               right_hand = skeleton.SkeletonPositions[JointId.HandRight]
               right_pos = skeleton_to_depth_image(right_hand, self.dispInfo.current_w, self.dispInfo.current_h)
-              print "Player", player.color "has hand position"
+              print "Player", player.color, "has hand position"
               print right_pos
