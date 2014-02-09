@@ -245,3 +245,5 @@ class PlayerObject(WorldObject):
   def moveright(self):
     self.action = "moveright"
     # self.rect = self.rect.move(10, 0)
+  def updateVelocity(self, vel):
+    self.velocity = vel

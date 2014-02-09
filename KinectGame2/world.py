@@ -60,5 +60,13 @@ class World:
               self.known_players[skeleton.dwTrackingID] = player
               right_hand = skeleton.SkeletonPositions[JointId.HandRight]
               right_pos = skeleton_to_depth_image(right_hand, self.dispInfo.current_w, self.dispInfo.current_h)
-              print "Player", player.color, "has hand position"
+              player.last_frame = right_pos
+              print "Player", player.color "has hand position"
               print right_pos
+          elif player is not None:
+            right_hand = skeleton.SkeletonPositions[JointId.HandRight]
+            right_pos = skeleton_to_depth_image(right_hand, self.dispInfo.current_w, self.dispInfo.current_h)
+            player.curr_frame = right_pos
+            dX = player.curr_frame[0] - player.last_frame[0] 
+            dY = player.curr_frame[1] - player.last_frame[1] 
+            player.updateVelocity(dX + dY*1j)
